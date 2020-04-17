@@ -5,6 +5,7 @@ from .model import Model
 from ... import describe
 from ...describe import Dimension, Synapses, Biases, Gradient
 from ..util import get_array_module
+from scipy.linalg.blas import sgemm as gemm
 
 
 def _set_dimensions_if_needed(model, X, y=None):
@@ -63,7 +64,8 @@ class Maxout(Model):
 
     def predict(self, X__BI):
         W = self.W.reshape((self.nO * self.nP, self.nI))
-        X__BOP = self.ops.gemm(X__BI, W, trans2=True)
+        # X__BOP = self.ops.gemm(X__BI, W, trans2=True)
+        X__BOP = gemm(X__BI, W, trans_b=1)
         X__BOP += self.b.reshape((self.nO * self.nP,))
         X__BOP = X__BOP.reshape((X__BOP.shape[0], self.nO, self.nP))
         best__BO, _ = self.ops.maxout(X__BOP)
