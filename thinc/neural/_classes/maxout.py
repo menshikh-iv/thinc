@@ -65,7 +65,7 @@ class Maxout(Model):
     def predict(self, X__BI):
         W = self.W.reshape((self.nO * self.nP, self.nI))
         # X__BOP = self.ops.gemm(X__BI, W, trans2=True)
-        X__BOP = gemm(X__BI, W, trans_b=1)
+        X__BOP = gemm(1., X__BI, W, trans_b=1, beta=1.)
         X__BOP += self.b.reshape((self.nO * self.nP,))
         X__BOP = X__BOP.reshape((X__BOP.shape[0], self.nO, self.nP))
         best__BO, _ = self.ops.maxout(X__BOP)
