@@ -6,6 +6,7 @@ from ... import describe
 from ...describe import Synapses
 from ...check import has_shape
 from ... import check
+import numpy as np
 
 
 @describe.attributes(
@@ -16,7 +17,16 @@ class Softmax(Affine):
 
     @check.arg(1, has_shape(("nB", "nI")))
     def predict(self, input__BI):
-        output__BO = self.ops.affine(self.W, self.b, input__BI)
+        # output__BO = self.ops.affine(self.W, self.b, input__BI)
+
+        """
+        def affine(self, weights, bias, signal):
+            dotted = self.gemm(signal, weights, trans2=True)
+            dotted += bias
+            return dotted
+        """
+        output__BO = np.dot(input__BI, self.W.T)
+        output__BO += self.b
         self.ops.softmax(output__BO, inplace=True)
         return output__BO
 
